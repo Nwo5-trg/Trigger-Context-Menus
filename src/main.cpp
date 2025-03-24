@@ -30,7 +30,7 @@ const std::unordered_map<int, ccColor3B> colorMap = {
     {3022, {104, 226, 255}}, {2902, {104, 226, 255}}, {899, {255, 255, 255}}
 };
 
-std::string floatToFormattedString(float num, uint round) {
+std::string floatToFormattedString(float num, int round) {
     std::stringstream ss;
     ss << std::fixed << std::setprecision(round) << num;
     std::string string = ss.str();
