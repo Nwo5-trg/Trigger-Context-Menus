@@ -1,0 +1,22 @@
+{
+	"geode": "4.3.0",
+	"gd": {
+		"win": "2.2074",
+		"android": "2.2074",
+		"mac": "2.2074"
+	},
+	"id": "nwo5.trigger_context_menus",
+	"name": "Trigger Context Menus",
+	"version": "v0.1.0-beta.1",
+	"developer": "Nwo5",
+	"description": "Adds context menus to triggers.",
+	"tags": ["editor", "enhancement", "utility", "offline"],
+	"links": {
+		"source": "https://github.com/Nwo5-trg/Trigger-Context-Menus"
+	},
+	"resources": {
+		"sprites": [
+			"resources/*.png"
+		]
+	}
+}
