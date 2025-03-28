@@ -153,6 +153,7 @@ class $modify(Editor, LevelEditorLayer) {
             label->setPosition(ccp(pos[loopIndex].x, pos[loopIndex].y + 7.5f));
 
             if (fieldID == "Move X") {
+                field->setFilter("-1234567890");
                 field->setString(floatToFormattedString(std::floor(std::round(obj->m_moveOffset.x) / (obj->m_smallStep ? 1 : 3)), 1).c_str(), false);
                 field->setCallback([obj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) {
@@ -161,6 +162,7 @@ class $modify(Editor, LevelEditorLayer) {
                 });
             }
             if (fieldID == "Move Y") {
+                field->setFilter("-1234567890");
                 field->setString(floatToFormattedString(std::floor(obj->m_moveOffset.y / (obj->m_smallStep ? 1 : 3)), 1).c_str(), false);
                 field->setCallback([obj] (const std::string& input) {
                     if (!input.empty()) obj->m_moveOffset.y = std::stoi(input) * (obj->m_smallStep ? 1 : 3);
@@ -393,7 +395,7 @@ class $modify(Editor, LevelEditorLayer) {
             }
             if (fieldID == "Scale X") {
                 auto scaleObj = static_cast<TransformTriggerGameObject*>(obj);
-                field->setFilter("1234567890.");
+                field->setFilter("1234567890.-");
                 field->setString(floatToFormattedString(scaleObj->m_objectScaleX, 3).c_str(), false);
                 field->setCallback([scaleObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) scaleObj->m_objectScaleX = std::stof(input);
@@ -401,7 +403,7 @@ class $modify(Editor, LevelEditorLayer) {
             }
             if (fieldID == "Scale Y") {
                 auto scaleObj = static_cast<TransformTriggerGameObject*>(obj);
-                field->setFilter("1234567890.");
+                field->setFilter("1234567890.-");
                 field->setString(floatToFormattedString(scaleObj->m_objectScaleX, 3).c_str(), false);
                 field->setCallback([scaleObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) scaleObj->m_objectScaleX = std::stof(input);
@@ -579,6 +581,10 @@ class $modify(EditUI, EditorUI) {
             m_fields->selectedObjectCache = p0;
             this->scheduleOnce(schedule_selector(EditUI::delayedCreateContextMenu), 0);
         }
+    }
+    void selectObjects(CCArray* p0, bool p1) {
+        EditorUI::selectObjects(p0, p1);
+        static_cast<Editor*>(LevelEditorLayer::get())->hideContextMenu();
     }
 
     void delayedCreateContextMenu(float dt) {
