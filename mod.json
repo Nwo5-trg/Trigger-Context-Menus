@@ -3,7 +3,8 @@
 	"gd": {
 		"win": "2.2074",
 		"android": "2.2074",
-		"mac": "2.2074"
+		"mac": "2.2074",
+		"ios": "2.2074"
 	},
 	"id": "nwo5.trigger_context_menus",
 	"name": "Trigger Context Menus",
@@ -22,7 +23,7 @@
 	"dependencies": [
 		{
 			"id": "geode.node-ids",
-			"version": ">=1.19.0",
+			"version": ">=1.20.1",
 			"importance": "required"
 		}
 	],

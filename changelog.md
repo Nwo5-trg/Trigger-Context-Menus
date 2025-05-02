@@ -1,6 +1,7 @@
 ## v0.1.0-beta.3
 - **Added** toggle context menu button (suggested by **debugboii**)
 - **Added** node ids dependency 3:
+- **Added** ios support
 
 - **Fixed** changelog
 - **Fixed** a few crashes
