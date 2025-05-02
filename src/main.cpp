@@ -587,6 +587,7 @@ class $modify(EditUI, EditorUI) {
             m_fields->selectedObjectCache = p0;
             this->scheduleOnce(schedule_selector(EditUI::delayedCreateContextMenu), 0);
         }
+        else if (contextMenuEnabled) static_cast<Editor*>(LevelEditorLayer::get())->hideContextMenu();
     }
     void selectObjects(CCArray* p0, bool p1) {
         EditorUI::selectObjects(p0, p1);
@@ -595,11 +596,6 @@ class $modify(EditUI, EditorUI) {
 
     void delayedCreateContextMenu(float dt) {
         if (auto obj = m_fields->selectedObjectCache) static_cast<Editor*>(LevelEditorLayer::get())->createContextMenu(obj);
-    }
-    
-    void deselectObject(GameObject* p0) {
-        EditorUI::deselectObject(p0);
-        if (contextMenuEnabled) static_cast<Editor*>(LevelEditorLayer::get())->hideContextMenu();
     }
 
     void deselectAll() {
