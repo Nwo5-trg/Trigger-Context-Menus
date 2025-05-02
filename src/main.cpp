@@ -2,10 +2,13 @@
 #include <Geode/modify/LevelEditorLayer.hpp>
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/SetupTriggerPopup.hpp>
+#include <Geode/modify/EditorPauseLayer.hpp>
 
 using namespace geode::prelude;
 
 auto mod = Mod::get();
+
+bool contextMenuEnabled = mod->getSavedValue<bool>("context-menus-enabled");
 
 const std::unordered_map<int, ccColor3B> colorMap = {
     {901, {255, 0, 255}}, {3006, {255, 0, 255}}, {3011, {255, 0, 255}},  
@@ -54,6 +57,11 @@ class $modify(Editor, LevelEditorLayer) {
         if (auto shaderLayer = this->getChildByType<ShaderLayer>(0)) m_fields->batchLayer = shaderLayer->getChildByType<CCNode>(1)->getChildByType<CCLayer>(0);
         else m_fields->batchLayer = this->getChildByType<CCNode>(1)->getChildByType<CCLayer>(0);
 
+        if (!(mod->setSavedValue("first-start-up", true))) {
+            mod->setSavedValue<bool>("context-menus-enabled", true);
+            contextMenuEnabled = true;
+        };
+
         auto contextMenuLayer = CCLayer::create();
         contextMenuLayer->setPosition(ccp(0.0f, 0.0f));
         contextMenuLayer->setZOrder(9999);
@@ -62,7 +70,6 @@ class $modify(Editor, LevelEditorLayer) {
         m_fields->contextMenuLayer = contextMenuLayer;
 
         auto menuNode = CCNode::create();
-        menuNode->setVisible(false);
         auto menuButtonMenu = CCMenu::create();
         menuButtonMenu->setContentSize(CCSize(75.0f, 75.0f));
         menuButtonMenu->setPosition(ccp(0.0f, 0.0f));
@@ -77,6 +84,7 @@ class $modify(Editor, LevelEditorLayer) {
         menuNode->addChild(menuButtonMenu);
         m_fields->contextMenuLayer->addChild(menuNode);        
         m_fields->contextMenu = menuNode;
+        hideContextMenu();
         return true;
     }
 
@@ -156,16 +164,14 @@ class $modify(Editor, LevelEditorLayer) {
                 field->setFilter("-1234567890");
                 field->setString(floatToFormattedString(std::floor(std::round(obj->m_moveOffset.x) / (obj->m_smallStep ? 1 : 3)), 1).c_str(), false);
                 field->setCallback([obj] (const std::string& input) {
-                    if (input.find_first_of("1234567890") != std::string::npos) {
-                        obj->m_moveOffset.x = std::stoi(input) * (obj->m_smallStep ? 1 : 3);
-                    }
+                    if (input.find_first_of("1234567890") != std::string::npos) obj->m_moveOffset.x = std::stoi(input) * (obj->m_smallStep ? 1 : 3);
                 });
             }
             if (fieldID == "Move Y") {
                 field->setFilter("-1234567890");
                 field->setString(floatToFormattedString(std::floor(obj->m_moveOffset.y / (obj->m_smallStep ? 1 : 3)), 1).c_str(), false);
                 field->setCallback([obj] (const std::string& input) {
-                    if (!input.empty()) obj->m_moveOffset.y = std::stoi(input) * (obj->m_smallStep ? 1 : 3);
+                    if (input.find_first_of("1234567890") != std::string::npos) obj->m_moveOffset.y = std::stoi(input) * (obj->m_smallStep ? 1 : 3);
                 });
             }
             if (fieldID == "Duration") {
@@ -206,7 +212,7 @@ class $modify(Editor, LevelEditorLayer) {
                 field->setCallback([field, obj] (const std::string& input) {
                     if (!input.empty()) {
                         obj->m_itemID = std::stoi(input);
-                        if (obj->m_objectID == 1817) obj->getObjectLabel()->setString(std::to_string(std::stoi(input)).c_str());
+                        if (obj->m_objectID == 1816 || obj->m_objectID == 1817) obj->getObjectLabel()->setString(std::to_string(std::stoi(input)).c_str());
                     }
                 });
             }
@@ -361,7 +367,7 @@ class $modify(Editor, LevelEditorLayer) {
                 });
             }
             if (fieldID == "Rotation") {
-                field->setFilter("1234567890.");
+                field->setFilter("1234567890.-");
                 field->setString(floatToFormattedString(obj->m_rotationDegrees, 2).c_str(), false);
                 field->setCallback([obj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) obj->m_rotationDegrees = std::stof(input);
@@ -404,9 +410,9 @@ class $modify(Editor, LevelEditorLayer) {
             if (fieldID == "Scale Y") {
                 auto scaleObj = static_cast<TransformTriggerGameObject*>(obj);
                 field->setFilter("1234567890.-");
-                field->setString(floatToFormattedString(scaleObj->m_objectScaleX, 3).c_str(), false);
+                field->setString(floatToFormattedString(scaleObj->m_objectScaleY, 3).c_str(), false);
                 field->setCallback([scaleObj] (const std::string& input) {
-                    if (input.find_first_of("1234567890") != std::string::npos) scaleObj->m_objectScaleX = std::stof(input);
+                    if (input.find_first_of("1234567890") != std::string::npos) scaleObj->m_objectScaleY = std::stof(input);
                 });
             }
             if (fieldID == "Intensity" || fieldID == "Strength" || fieldID == "Buldge") {
@@ -542,7 +548,7 @@ class $modify(Editor, LevelEditorLayer) {
     void hideContextMenu() {
         if (auto contextMenu = m_fields->contextMenu) {
             contextMenu->setVisible(false);
-            contextMenu->setPosition(0, 0);
+            contextMenu->setPosition(-500.0f, -500.0f);
         }
     }
 
@@ -577,14 +583,14 @@ class $modify(EditUI, EditorUI) {
 
     void selectObject(GameObject* p0, bool p1) {
         EditorUI::selectObject(p0, p1);
-        if (typeinfo_cast<EffectGameObject*>(p0)) {
+        if (contextMenuEnabled && typeinfo_cast<EffectGameObject*>(p0)) {
             m_fields->selectedObjectCache = p0;
             this->scheduleOnce(schedule_selector(EditUI::delayedCreateContextMenu), 0);
         }
     }
     void selectObjects(CCArray* p0, bool p1) {
         EditorUI::selectObjects(p0, p1);
-        static_cast<Editor*>(LevelEditorLayer::get())->hideContextMenu();
+        if (contextMenuEnabled) static_cast<Editor*>(LevelEditorLayer::get())->hideContextMenu();
     }
 
     void delayedCreateContextMenu(float dt) {
@@ -593,12 +599,12 @@ class $modify(EditUI, EditorUI) {
     
     void deselectObject(GameObject* p0) {
         EditorUI::deselectObject(p0);
-        static_cast<Editor*>(LevelEditorLayer::get())->hideContextMenu();
+        if (contextMenuEnabled) static_cast<Editor*>(LevelEditorLayer::get())->hideContextMenu();
     }
 
     void deselectAll() {
         EditorUI::deselectAll();
-        static_cast<Editor*>(LevelEditorLayer::get())->hideContextMenu();
+        if (contextMenuEnabled) static_cast<Editor*>(LevelEditorLayer::get())->hideContextMenu();
     }
 };
 
@@ -606,5 +612,30 @@ class $modify(TriggerPopup, SetupTriggerPopup) {
     void onClose(CCObject* sender) {
         SetupTriggerPopup::onClose(sender);
         if (auto editor = static_cast<Editor*>(LevelEditorLayer::get())) if (!m_gameObjects) editor->createContextMenu(m_gameObject);
+    }
+};
+
+class $modify(EditorPause, EditorPauseLayer) {
+    // static void onModify(auto& self) {
+    //     (void)self.setHookPriority("EditorPauseLayer::init", Priority::NormalPost);
+    // }
+    
+    bool init (LevelEditorLayer* p0) {
+        if (!EditorPauseLayer::init(p0)) return false;
+        if (mod->getSettingValue<bool>("add-toggle-context-menu-button")) {
+            auto toggler = CCMenuItemToggler::create(CircleButtonSprite::create(CCSprite::create("togglebuttonoff.png"_spr), CircleBaseColor::Green, CircleBaseSize::Small), 
+            CircleButtonSprite::create(CCSprite::create("togglebuttonon.png"_spr), CircleBaseColor::Green, CircleBaseSize::Small), this, menu_selector(EditorPause::onToggleContextMenu));
+            toggler->toggle(contextMenuEnabled);
+            auto menu = this->getChildByID("guidelines-menu");
+            menu->addChild(toggler);
+            menu->updateLayout();
+        }
+        return true;
+    }
+
+    void onToggleContextMenu(CCObject* sender) {
+        mod->setSavedValue<bool>("context-menus-enabled", !contextMenuEnabled);
+        contextMenuEnabled = !contextMenuEnabled;
+        static_cast<Editor*>(LevelEditorLayer::get())->hideContextMenu();
     }
 };
