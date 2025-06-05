@@ -30,4 +30,4 @@ inline const std::unordered_set<int> validIDs = {
     914
 };
 
-std::string floatToFormattedString(float num, int round);
+std::string ftofstr(float num, int decimal);

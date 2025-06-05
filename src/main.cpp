@@ -132,21 +132,21 @@ class $modify(Editor, LevelEditorLayer) {
 
             if (fieldID == "Move X") {
                 field->setFilter("-1234567890");
-                field->setString(floatToFormattedString(std::floor(std::round(obj->m_moveOffset.x) / (obj->m_smallStep ? 1 : 3)), 1).c_str(), false);
+                field->setString(ftofstr(std::floor(std::round(obj->m_moveOffset.x) / (obj->m_smallStep ? 1 : 3)), 1).c_str(), false);
                 field->setCallback([obj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) obj->m_moveOffset.x = std::stoi(input) * (obj->m_smallStep ? 1 : 3);
                 });
             }
             if (fieldID == "Move Y") {
                 field->setFilter("-1234567890");
-                field->setString(floatToFormattedString(std::floor(obj->m_moveOffset.y / (obj->m_smallStep ? 1 : 3)), 1).c_str(), false);
+                field->setString(ftofstr(std::floor(obj->m_moveOffset.y / (obj->m_smallStep ? 1 : 3)), 1).c_str(), false);
                 field->setCallback([obj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) obj->m_moveOffset.y = std::stoi(input) * (obj->m_smallStep ? 1 : 3);
                 });
             }
             if (fieldID == "Duration") {
                 field->setFilter("1234567890.");
-                field->setString(floatToFormattedString(obj->m_duration, 2).c_str(), false);
+                field->setString(ftofstr(obj->m_duration, 2).c_str(), false);
                 field->setCallback([obj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) obj->m_duration = std::stof(input);
                 });
@@ -154,7 +154,7 @@ class $modify(Editor, LevelEditorLayer) {
             if (fieldID == "Spawn Delay") {
                 auto spawnObj = static_cast<SpawnTriggerGameObject*>(obj);
                 field->setFilter("1234567890.");
-                field->setString(floatToFormattedString(spawnObj->m_spawnDelay, 4).c_str(), false);
+                field->setString(ftofstr(spawnObj->m_spawnDelay, 4).c_str(), false);
                 field->setCallback([spawnObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) spawnObj->m_spawnDelay = std::stof(input);
                 });
@@ -338,14 +338,14 @@ class $modify(Editor, LevelEditorLayer) {
             }
             if (fieldID == "Rotation") {
                 field->setCommonFilter(CommonFilter::Float);
-                field->setString(floatToFormattedString(obj->m_rotationDegrees, 2).c_str(), false);
+                field->setString(ftofstr(obj->m_rotationDegrees, 2).c_str(), false);
                 field->setCallback([obj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) obj->m_rotationDegrees = std::stof(input);
                 });
             }
             if (fieldID == "Opacity") {
                 field->setFilter("1234567890.");
-                field->setString(floatToFormattedString(obj->m_opacity, 2).c_str(), false);
+                field->setString(ftofstr(obj->m_opacity, 2).c_str(), false);
                 field->setCallback([obj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) {
                         if (std::stof(input) <= 1) obj->m_opacity = std::stof(input);
@@ -372,7 +372,7 @@ class $modify(Editor, LevelEditorLayer) {
             if (fieldID == "Scale X") {
                 auto scaleObj = static_cast<TransformTriggerGameObject*>(obj);
                 field->setCommonFilter(CommonFilter::Float);
-                field->setString(floatToFormattedString(scaleObj->m_objectScaleX, 3).c_str(), false);
+                field->setString(ftofstr(scaleObj->m_objectScaleX, 3).c_str(), false);
                 field->setCallback([scaleObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) scaleObj->m_objectScaleX = std::stof(input);
                 });
@@ -380,7 +380,7 @@ class $modify(Editor, LevelEditorLayer) {
             if (fieldID == "Scale Y") {
                 auto scaleObj = static_cast<TransformTriggerGameObject*>(obj);
                 field->setCommonFilter(CommonFilter::Float);
-                field->setString(floatToFormattedString(scaleObj->m_objectScaleY, 3).c_str(), false);
+                field->setString(ftofstr(scaleObj->m_objectScaleY, 3).c_str(), false);
                 field->setCallback([scaleObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) scaleObj->m_objectScaleY = std::stof(input);
                 });
@@ -388,7 +388,7 @@ class $modify(Editor, LevelEditorLayer) {
             if (fieldID == "Intensity" || fieldID == "Strength" || fieldID == "Buldge") {
                 auto shaderObj = static_cast<ShaderGameObject*>(obj);
                 field->setCommonFilter(CommonFilter::Float);
-                field->setString(floatToFormattedString(shaderObj->m_strength, 2).c_str(), false);
+                field->setString(ftofstr(shaderObj->m_strength, 2).c_str(), false);
                 field->setCallback([shaderObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) shaderObj->m_strength = std::stof(input);
                 });
@@ -396,7 +396,7 @@ class $modify(Editor, LevelEditorLayer) {
             if (fieldID == "Size" || fieldID == "Modifier") {
                 auto shaderObj = static_cast<ShaderGameObject*>(obj);
                 field->setCommonFilter(CommonFilter::Float);
-                field->setString(floatToFormattedString(shaderObj->m_waveWidth, shaderObj->m_objectID == 2917 ? 3 : 2).c_str(), false);
+                field->setString(ftofstr(shaderObj->m_waveWidth, shaderObj->m_objectID == 2917 ? 3 : 2).c_str(), false);
                 field->setCallback([shaderObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) shaderObj->m_waveWidth = std::stof(input);
                 });
@@ -404,7 +404,7 @@ class $modify(Editor, LevelEditorLayer) {
             if (fieldID == "Radius") {
                 auto shaderObj = static_cast<ShaderGameObject*>(obj);
                 field->setCommonFilter(CommonFilter::Float);
-                field->setString(floatToFormattedString(shaderObj->m_objectID == 2917 ? shaderObj->m_maxSize : shaderObj->m_targetX, shaderObj->m_objectID == 2917 ? 3 : 2).c_str(), false);
+                field->setString(ftofstr(shaderObj->m_objectID == 2917 ? shaderObj->m_maxSize : shaderObj->m_targetX, shaderObj->m_objectID == 2917 ? 3 : 2).c_str(), false);
                 field->setCallback([shaderObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) shaderObj->m_objectID == 2917 ? shaderObj->m_maxSize : shaderObj->m_targetX  = std::stof(input);
                 });
@@ -412,7 +412,7 @@ class $modify(Editor, LevelEditorLayer) {
             if (fieldID == "Speed") {
                 auto shaderObj = static_cast<ShaderGameObject*>(obj);
                 field->setFilter("1234567890.");
-                field->setString(floatToFormattedString(shaderObj->m_speed, 2).c_str(), false);
+                field->setString(ftofstr(shaderObj->m_speed, 2).c_str(), false);
                 field->setCallback([shaderObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) shaderObj->m_speed = std::stof(input);
                 });
@@ -420,7 +420,7 @@ class $modify(Editor, LevelEditorLayer) {
             if (fieldID == "Fade") {
                 auto shaderObj = static_cast<ShaderGameObject*>(obj);
                 field->setCommonFilter(CommonFilter::Float);
-                field->setString(floatToFormattedString(shaderObj->m_fadeIn, 2).c_str(), false);
+                field->setString(ftofstr(shaderObj->m_fadeIn, 2).c_str(), false);
                 field->setCallback([shaderObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) shaderObj->m_fadeIn = std::stof(input);
                 });
@@ -428,7 +428,7 @@ class $modify(Editor, LevelEditorLayer) {
             if (fieldID == "RGB Off") {
                 auto shaderObj = static_cast<ShaderGameObject*>(obj);
                 field->setCommonFilter(CommonFilter::Float);
-                field->setString(floatToFormattedString(shaderObj->m_timeOff, 2).c_str(), false);
+                field->setString(ftofstr(shaderObj->m_timeOff, 2).c_str(), false);
                 field->setCallback([shaderObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) shaderObj->m_timeOff = std::stof(input);
                 });
@@ -436,7 +436,7 @@ class $modify(Editor, LevelEditorLayer) {
             if (fieldID == "Shader Target X") {
                 auto shaderObj = static_cast<ShaderGameObject*>(obj);
                 field->setCommonFilter(CommonFilter::Float);
-                field->setString(floatToFormattedString(shaderObj->m_targetX, 2).c_str(), false);
+                field->setString(ftofstr(shaderObj->m_targetX, 2).c_str(), false);
                 field->setCallback([shaderObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) shaderObj->m_targetX = std::stof(input);
                 });
@@ -444,7 +444,7 @@ class $modify(Editor, LevelEditorLayer) {
             if (fieldID == "Shader Target Y") {
                 auto shaderObj = static_cast<ShaderGameObject*>(obj);
                 field->setCommonFilter(CommonFilter::Float);
-                field->setString(floatToFormattedString(shaderObj->m_targetY, 2).c_str(), false);
+                field->setString(ftofstr(shaderObj->m_targetY, 2).c_str(), false);
                 field->setCallback([shaderObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) shaderObj->m_targetY = std::stof(input);
                 });
