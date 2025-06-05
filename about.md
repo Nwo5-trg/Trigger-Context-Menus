@@ -9,5 +9,6 @@ Adds context menus to triggers so you can edit basic trigger values faster.
 - Glitch, Chromatic, Chroma Glitch, Pixelate, 
 Lens Circle, Radial Blur, Motion Blur, Buldge, 
 Pinch, Split Screen
+- Text Object
 ## Credits
 *Rue* for the mod idea and assets

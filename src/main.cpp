@@ -3,44 +3,13 @@
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/SetupTriggerPopup.hpp>
 #include <Geode/modify/EditorPauseLayer.hpp>
+#include "Utils.hpp"
 
 using namespace geode::prelude;
 
 auto mod = Mod::get();
 
 bool contextMenuEnabled = mod->getSavedValue<bool>("context-menus-enabled");
-
-const std::unordered_map<int, ccColor3B> colorMap = {
-    {901, {255, 0, 255}}, {3006, {255, 0, 255}}, {3011, {255, 0, 255}},  
-    {1616, {163, 0, 86}}, {1006, {255, 255, 0}}, {3010, {255, 255, 0}},  
-    {3015, {255, 255, 0}}, {3617, {255, 255, 0}}, {3620, {255, 255, 0}},  
-    {2015, {255, 255, 0}}, {1007, {0, 255, 255}}, {3009, {0, 255, 255}},  
-    {3014, {0, 255, 255}}, {3615, {0, 255, 255}}, {3619, {0, 255, 255}},  
-    {2066, {0, 255, 255}}, {1049, {255, 63, 63}}, {1268, {35, 204, 127}},  
-    {1346, {127, 127, 255}}, {3007, {127, 127, 255}}, {3012, {127, 127, 255}},  
-    {1913, {127, 127, 255}}, {2067, {63, 191, 255}}, {3008, {63, 191, 255}},  
-    {3013, {63, 191, 255}}, {2062, {63, 191, 255}}, {1347, {255, 127, 127}},  
-    {1914, {255, 127, 127}}, {1585, {255, 183, 0}}, {1814, {255, 255, 127}},  
-    {3016, {204, 255, 199}}, {3660, {204, 255, 199}}, {3661, {204, 255, 199}},  
-    {1595, {0, 137, 178}}, {1611, {255, 183, 252}}, {1811, {255, 127, 255}},  
-    {2999, {255, 127, 255}}, {3612, {255, 127, 255}}, {1817, {255, 109, 0}},  
-    {3618, {255, 100, 0}}, {1912, {63, 127, 255}}, {2068, {165, 94, 255}},  
-    {3607, {165, 94, 255}}, {3608, {150, 150, 150}}, {3602, {255, 255, 255}},  
-    {3603, {255, 255, 255}}, {3604, {255, 255, 255}}, {1615, {255, 255, 255}},  
-    {3613, {255, 255, 255}}, {3662, {255, 255, 255}}, {1935, {153, 127, 153}},  
-    {1932, {101, 255, 255}}, {3606, {127, 255, 255}}, {1815, {83, 66, 250}},  
-    {3609, {83, 191, 255}}, {1812, {204, 101, 101}}, {3600, {0, 0, 0}},  
-    {3022, {104, 226, 255}}, {2902, {104, 226, 255}}, {899, {255, 255, 255}}
-};
-
-std::string floatToFormattedString(float num, int round) {
-    std::stringstream ss;
-    ss << std::fixed << std::setprecision(round) << num;
-    std::string string = ss.str();
-    string.erase(string.find_last_not_of('0') + 1, std::string::npos);
-    if (string.back() == '.') string.pop_back();
-    return string;
-}
 
 class $modify(Editor, LevelEditorLayer) {
     struct Fields {
@@ -116,6 +85,7 @@ class $modify(Editor, LevelEditorLayer) {
         if (id == 2916) setupContextMenu(obj, menuNode, getColorFromID(id), "Buldge", "Buldge", "Radius", "Duration", "Null", "Spawn", "Multi");
         if (id == 2917) setupContextMenu(obj, menuNode, getColorFromID(id), "Pinch", "Radius", "Modifier", "Shader Use X/Y", "Duration", "Spawn", "Multi");
         if (id == 2924) setupContextMenu(obj, menuNode, getColorFromID(id), "Split Screen", "Shader Target X", "Shader Target Y", "Shader Use X/Y", "Duration", "Spawn", "Multi");
+        if (id == 914) setupContextMenu(obj, menuNode, getColorFromID(id), "Text", "Text", "Null", "Null", "Null", "Null", "Null");
         // if (id == ) setupContextMenu(obj, menuNode, getColorFromID(id), "", "", "", "", "", "Spawn", "Multi");
         
     }
@@ -367,7 +337,7 @@ class $modify(Editor, LevelEditorLayer) {
                 });
             }
             if (fieldID == "Rotation") {
-                field->setFilter("1234567890.-");
+                field->setCommonFilter(CommonFilter::Float);
                 field->setString(floatToFormattedString(obj->m_rotationDegrees, 2).c_str(), false);
                 field->setCallback([obj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) obj->m_rotationDegrees = std::stof(input);
@@ -401,7 +371,7 @@ class $modify(Editor, LevelEditorLayer) {
             }
             if (fieldID == "Scale X") {
                 auto scaleObj = static_cast<TransformTriggerGameObject*>(obj);
-                field->setFilter("1234567890.-");
+                field->setCommonFilter(CommonFilter::Float);
                 field->setString(floatToFormattedString(scaleObj->m_objectScaleX, 3).c_str(), false);
                 field->setCallback([scaleObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) scaleObj->m_objectScaleX = std::stof(input);
@@ -409,7 +379,7 @@ class $modify(Editor, LevelEditorLayer) {
             }
             if (fieldID == "Scale Y") {
                 auto scaleObj = static_cast<TransformTriggerGameObject*>(obj);
-                field->setFilter("1234567890.-");
+                field->setCommonFilter(CommonFilter::Float);
                 field->setString(floatToFormattedString(scaleObj->m_objectScaleY, 3).c_str(), false);
                 field->setCallback([scaleObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) scaleObj->m_objectScaleY = std::stof(input);
@@ -417,7 +387,7 @@ class $modify(Editor, LevelEditorLayer) {
             }
             if (fieldID == "Intensity" || fieldID == "Strength" || fieldID == "Buldge") {
                 auto shaderObj = static_cast<ShaderGameObject*>(obj);
-                field->setFilter("1234567890.-");
+                field->setCommonFilter(CommonFilter::Float);
                 field->setString(floatToFormattedString(shaderObj->m_strength, 2).c_str(), false);
                 field->setCallback([shaderObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) shaderObj->m_strength = std::stof(input);
@@ -425,7 +395,7 @@ class $modify(Editor, LevelEditorLayer) {
             }
             if (fieldID == "Size" || fieldID == "Modifier") {
                 auto shaderObj = static_cast<ShaderGameObject*>(obj);
-                field->setFilter("1234567890.-");
+                field->setCommonFilter(CommonFilter::Float);
                 field->setString(floatToFormattedString(shaderObj->m_waveWidth, shaderObj->m_objectID == 2917 ? 3 : 2).c_str(), false);
                 field->setCallback([shaderObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) shaderObj->m_waveWidth = std::stof(input);
@@ -433,7 +403,7 @@ class $modify(Editor, LevelEditorLayer) {
             }
             if (fieldID == "Radius") {
                 auto shaderObj = static_cast<ShaderGameObject*>(obj);
-                field->setFilter("1234567890.-");
+                field->setCommonFilter(CommonFilter::Float);
                 field->setString(floatToFormattedString(shaderObj->m_objectID == 2917 ? shaderObj->m_maxSize : shaderObj->m_targetX, shaderObj->m_objectID == 2917 ? 3 : 2).c_str(), false);
                 field->setCallback([shaderObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) shaderObj->m_objectID == 2917 ? shaderObj->m_maxSize : shaderObj->m_targetX  = std::stof(input);
@@ -449,7 +419,7 @@ class $modify(Editor, LevelEditorLayer) {
             }
             if (fieldID == "Fade") {
                 auto shaderObj = static_cast<ShaderGameObject*>(obj);
-                field->setFilter("1234567890.-");
+                field->setCommonFilter(CommonFilter::Float);
                 field->setString(floatToFormattedString(shaderObj->m_fadeIn, 2).c_str(), false);
                 field->setCallback([shaderObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) shaderObj->m_fadeIn = std::stof(input);
@@ -457,7 +427,7 @@ class $modify(Editor, LevelEditorLayer) {
             }
             if (fieldID == "RGB Off") {
                 auto shaderObj = static_cast<ShaderGameObject*>(obj);
-                field->setFilter("1234567890.-");
+                field->setCommonFilter(CommonFilter::Float);
                 field->setString(floatToFormattedString(shaderObj->m_timeOff, 2).c_str(), false);
                 field->setCallback([shaderObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) shaderObj->m_timeOff = std::stof(input);
@@ -465,7 +435,7 @@ class $modify(Editor, LevelEditorLayer) {
             }
             if (fieldID == "Shader Target X") {
                 auto shaderObj = static_cast<ShaderGameObject*>(obj);
-                field->setFilter("1234567890.-");
+                field->setCommonFilter(CommonFilter::Float);
                 field->setString(floatToFormattedString(shaderObj->m_targetX, 2).c_str(), false);
                 field->setCallback([shaderObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) shaderObj->m_targetX = std::stof(input);
@@ -473,7 +443,7 @@ class $modify(Editor, LevelEditorLayer) {
             }
             if (fieldID == "Shader Target Y") {
                 auto shaderObj = static_cast<ShaderGameObject*>(obj);
-                field->setFilter("1234567890.-");
+                field->setCommonFilter(CommonFilter::Float);
                 field->setString(floatToFormattedString(shaderObj->m_targetY, 2).c_str(), false);
                 field->setCallback([shaderObj] (const std::string& input) {
                     if (input.find_first_of("1234567890") != std::string::npos) shaderObj->m_targetY = std::stof(input);
@@ -508,6 +478,13 @@ class $modify(Editor, LevelEditorLayer) {
                         (shaderObj->m_objectID == 2917 ? shaderObj->m_snapGrid : shaderObj->m_useY) = true;
                         field->setString("Both (3)", false);
                     }
+                });
+            }
+            if (fieldID == "Text") {
+                field->setCommonFilter(CommonFilter::Any);
+                field->setString(static_cast<TextGameObject*>(static_cast<GameObject*>(obj))->m_text, false);
+                field->setCallback([obj] (const std::string& input) {
+                    static_cast<TextGameObject*>(static_cast<GameObject*>(obj))->updateTextObject(input.empty() ? "A" : input, false);
                 });
             }
 
@@ -583,7 +560,7 @@ class $modify(EditUI, EditorUI) {
 
     void selectObject(GameObject* p0, bool p1) {
         EditorUI::selectObject(p0, p1);
-        if (contextMenuEnabled && typeinfo_cast<EffectGameObject*>(p0)) {
+        if (contextMenuEnabled && validIDs.contains(p0->m_objectID)) {
             m_fields->selectedObjectCache = p0;
             this->scheduleOnce(schedule_selector(EditUI::delayedCreateContextMenu), 0);
         }
@@ -612,10 +589,6 @@ class $modify(TriggerPopup, SetupTriggerPopup) {
 };
 
 class $modify(EditorPause, EditorPauseLayer) {
-    // static void onModify(auto& self) {
-    //     (void)self.setHookPriority("EditorPauseLayer::init", Priority::NormalPost);
-    // }
-    
     bool init (LevelEditorLayer* p0) {
         if (!EditorPauseLayer::init(p0)) return false;
         if (mod->getSettingValue<bool>("add-toggle-context-menu-button")) {
